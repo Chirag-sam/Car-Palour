@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_displaysub"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.chirag.carparlour.displaysub"
+    android:orientation="vertical">
+    <TextView
+            android:id="@+id/washes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
+            android:text=""
+            android:textSize="28sp"
+            />
+    <TextView
+        android:id="@+id/surref"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
+        android:text=""
+        android:textSize="28sp"
+        android:layout_below="@+id/washes"
+        />
+    <TextView
+        android:id="@+id/duccle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
+        android:text=""
+        android:textSize="28sp"
+        android:layout_below="@+id/surref"
+        />
+    <TextView
+        android:id="@+id/intenr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
+        android:text=""
+        android:textSize="28sp"
+        android:layout_below="@+id/duccle"
+        />
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
+        android:text=""
+        android:textSize="28sp"
+        android:layout_below="@+id/intenr"
+        />
+    <Button
+        android:id="@+id/booknow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@android:color/holo_red_light"
+        android:filterTouchesWhenObscured="true"
+        android:padding="17dp"
+        android:text="book Now"
+        android:textColor="@color/colorWhite"
+        android:layout_below="@+id/price"/>
+
+</RelativeLayout>
