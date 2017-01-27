@@ -54,7 +54,7 @@ public class bookawash extends AppCompatActivity {
                 {
                     actv1.setAdapter(adapter1);
                 }
-                else if (s.equals("Hyuandi"))
+                else if (s.equals("Hyuandai"))
                 {
                     actv1.setAdapter(adapter2);
                 }
