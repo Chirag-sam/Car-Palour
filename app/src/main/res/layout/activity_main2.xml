@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.example.chirag.carparlour.Main2Activity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+       >
+    <Button android:layout_width="180dp" android:layout_height="wrap_content"
+            android:id="@+id/login"
+            android:textColor="@color/colorWhite"
+            android:background="@color/dot_light_screen1"
+            android:text="LOGIN"
+            android:layout_weight="1"
+            android:layout_margin="2dp"
+
+
+            android:filterTouchesWhenObscured="true"/>
+    <Button android:layout_width="180dp" android:layout_height="wrap_content"
+            android:filterTouchesWhenObscured="true"
+            android:id="@+id/signup"
+            android:textColor="@color/colorWhite"
+            android:background="@color/dot_light_screen1"
+            android:layout_margin="2dp"
+            android:text="SIGN UP"
+            android:layout_weight="1"
+    />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layoutDots"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:layout_above="@id/LinearLayout02"
+
+        android:orientation="horizontal">
+    </LinearLayout>
+</RelativeLayout>

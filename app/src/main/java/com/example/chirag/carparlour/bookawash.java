@@ -40,26 +40,28 @@ public class bookawash extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 actv.showDropDown();
+
             }
         });
 
-        final String s = actv.getText().toString();
-        if(s.equals("Maruti"))
-        {
-            actv1.setAdapter(adapter1);
-        }
-        else if (s.equals("Hyuandi"))
-        {
-            actv1.setAdapter(adapter2);
-        }
-        else if (s.equals("Audi"))
-        {
-            actv1.setAdapter(adapter3);
-        }
+
 
         im1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final String s = actv.getText().toString();
+                if(s.equals("Maruti"))
+                {
+                    actv1.setAdapter(adapter1);
+                }
+                else if (s.equals("Hyuandi"))
+                {
+                    actv1.setAdapter(adapter2);
+                }
+                else if (s.equals("Audi"))
+                {
+                    actv1.setAdapter(adapter3);
+                }
                 actv1.showDropDown();
             }
         });

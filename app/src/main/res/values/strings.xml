@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Car parlour</string>
+    <string name="monthly">monthly</string>
+    <string name="quarterly">Quarterly</string>
+    <string name="half_yearly">Half yearly</string>
+    <string name="yearly">yearly</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

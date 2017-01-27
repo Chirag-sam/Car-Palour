@@ -18,6 +18,7 @@
         android:layout_marginBottom="25dp"
         android:orientation="vertical"
         android:padding="10dp"
+        android:id="@+id/linearlayout"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true">
 
@@ -78,11 +79,11 @@
     </LinearLayout>
 
     <ImageView
-        app:srcCompat="@drawable/images"
-        android:layout_above="@+id/linearLayout"
+        app:srcCompat="@drawable/car"
+        android:layout_above="@+id/linearlayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="29dp"
+        android:layout_marginBottom="2dp"
         android:id="@+id/imageView"
-        android:layout_width="80dp"
-        android:layout_height="80dp" />
+        android:layout_width="150dp"
+        android:layout_height="150dp" />
 </RelativeLayout>
