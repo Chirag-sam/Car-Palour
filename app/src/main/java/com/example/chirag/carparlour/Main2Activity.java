@@ -1,21 +1,26 @@
 package com.example.chirag.carparlour;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.InputType;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,7 +28,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import static android.text.Html.fromHtml;
+import static android.text.TextUtils.isEmpty;
 import static com.example.chirag.carparlour.Main2Activity.ParallaxPageTransformer.ParallaxTransformInformation.PARALLAX_EFFECT_DEFAULT;
 
 public class Main2Activity extends AppCompatActivity {
@@ -95,21 +103,67 @@ public class Main2Activity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i=new Intent(Main2Activity.this,MainActivity.class);
-                startActivity(i);
-                finish();
+                final Dialog dialog;
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    dialog = new Dialog(Main2Activity.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+                } else {
+                    dialog = new Dialog(Main2Activity.this);
+                }
+                dialog.setContentView(R.layout.logindialog);
+
+                dialog.setTitle(fromHtml("<font color='#c83737'>Log In</font>"));
+
+
+                Button signinbutton = (Button) dialog.findViewById(R.id.signinbutton);
+                final EditText edittextdial = (EditText) dialog.findViewById(R.id.email);
+                final TextInputLayout edittexttil = (TextInputLayout) dialog.findViewById(R.id.edittextdialtil);
+
+                final EditText passw = (EditText) dialog.findViewById(R.id.passw);
+                final TextInputLayout pass = (TextInputLayout) dialog.findViewById(R.id.pass);
+
+
+                edittextdial.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                edittexttil.setError(null);
+                signinbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        boolean cancel = false;
+                        String email = edittextdial.getText().toString();
+                        if (!isValidEmail(email)) {
+                            edittexttil.setError("Invalid e-mail address");
+                            edittexttil.requestFocus();
+                            cancel = true;
+                        }
+                        if (cancel)
+                            edittexttil.requestFocus();
+                        else {
+                            Intent i=new Intent(Main2Activity.this,MainActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
+
+                    }
+                });
+
+                dialog.show();
 
             }
         });
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i=new Intent(Main2Activity.this,MainActivity.class);
+                Intent i=new Intent(Main2Activity.this,signup.class);
                 startActivity(i);
                 finish();
 
             }
         });
+    }
+    private boolean isValidEmail(String email) {
+
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return !isEmpty(email) && pattern.matcher(email).matches();
     }
     private void changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -161,7 +215,7 @@ public class Main2Activity extends AppCompatActivity {
         dotsLayout.removeAllViews();
         for (int i = 0; i < dots.length; i++) {
             dots[i] = new TextView(this);
-            dots[i].setText(Html.fromHtml("&#8226;"));
+            dots[i].setText(fromHtml("&#8226;"));
             dots[i].setTextSize(35);
             dots[i].setTextColor(colorsInactive[currentPage]);
             dotsLayout.addView(dots[i]);
@@ -221,6 +275,7 @@ public class Main2Activity extends AppCompatActivity {
                 }
             }
         }
+
 
 
         /**
