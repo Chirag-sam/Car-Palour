@@ -138,6 +138,7 @@ public class Main2Activity extends AppCompatActivity {
                         if (cancel)
                             edittexttil.requestFocus();
                         else {
+                            dialog.dismiss();
                             Intent i=new Intent(Main2Activity.this,MainActivity.class);
                             startActivity(i);
                             finish();
