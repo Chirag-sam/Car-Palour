@@ -1,10 +1,12 @@
 package com.example.chirag.carparlour;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
@@ -13,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +27,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,11 +55,42 @@ public class Main2Activity extends AppCompatActivity {
     private MyViewPagerAdapter myViewPagerAdapter;
     private LinearLayout dotsLayout;
     private TextView[] dots;
+    private static final String TAG = "EmailPassword";
+    private FirebaseAuth mAuth;
+    DatabaseReference mDatabase;
+    ProgressDialog pd;
+    Dialog dialog;
+
+    private FirebaseAuth.AuthStateListener mAuthListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        pd = new ProgressDialog(Main2Activity.this);
+        pd.setMessage("loading");
+        mAuth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
+       mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        // [START auth_state_listener]
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    checkuserexits();
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // [START_EXCLUDE]
+
+                // [END_EXCLUDE]
+            }
+        };
         final Button login=(Button)findViewById(R.id.login);
         final Button signup=(Button)findViewById(R.id.signup);
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
@@ -103,7 +150,7 @@ public class Main2Activity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Dialog dialog;
+
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     dialog = new Dialog(Main2Activity.this, android.R.style.Theme_Material_Light_Dialog_Alert);
@@ -111,43 +158,52 @@ public class Main2Activity extends AppCompatActivity {
                     dialog = new Dialog(Main2Activity.this);
                 }
                 dialog.setContentView(R.layout.logindialog);
-
+                dialog.setCancelable(true);
                 dialog.setTitle(fromHtml("<font color='#c83737'>Log In</font>"));
-
+                dialog.show();
 
                 Button signinbutton = (Button) dialog.findViewById(R.id.signinbutton);
-                final EditText edittextdial = (EditText) dialog.findViewById(R.id.email);
-                final TextInputLayout edittexttil = (TextInputLayout) dialog.findViewById(R.id.edittextdialtil);
+                final EditText emaile = (EditText) dialog.findViewById(R.id.email);
+                final TextInputLayout emailt = (TextInputLayout) dialog.findViewById(R.id.edittextdialtil);
 
-                final EditText passw = (EditText) dialog.findViewById(R.id.passw);
-                final TextInputLayout pass = (TextInputLayout) dialog.findViewById(R.id.pass);
+                final EditText passe = (EditText) dialog.findViewById(R.id.passw);
+                final TextInputLayout passt = (TextInputLayout) dialog.findViewById(R.id.pass);
 
 
-                edittextdial.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                edittexttil.setError(null);
+
+
                 signinbutton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
                         boolean cancel = false;
-                        String email = edittextdial.getText().toString();
+                        String email = emaile.getText().toString();
                         if (!isValidEmail(email)) {
-                            edittexttil.setError("Invalid e-mail address");
-                            edittexttil.requestFocus();
+                            emailt.setError("Invalid e-mail address");
+                            emailt.requestFocus();
                             cancel = true;
                         }
+                        else emailt.setError(null);
+                        String password = passe.getText().toString();
+                        if (TextUtils.isEmpty(password)) {
+                            passt.setError("Required.");
+                            passt.requestFocus();
+                            cancel = true;
+                        } else {
+                            passt.setError(null);
+                        }
                         if (cancel)
-                            edittexttil.requestFocus();
+                            emailt.requestFocus();
                         else {
                             dialog.dismiss();
-                            Intent i=new Intent(Main2Activity.this,MainActivity.class);
-                            startActivity(i);
-                            finish();
+                            signIn(email,password);
+
                         }
 
                     }
                 });
 
-                dialog.show();
+
 
             }
         });
@@ -314,6 +370,101 @@ public class Main2Activity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+    @Override
+    protected void onDestroy()
+    {
+        if (dialog != null) {
+            dialog.dismiss();
+            dialog = null;
+        }
+        if (pd!=null){
+            pd.dismiss();
+            pd=null;
+        }
+        super.onDestroy(); //finally
+    }
+    private void signIn(String email, String password) {
+        Log.d(TAG, "signIn:" + email);
+pd.show();
+
+        // [START sign_in_with_email]
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithEmail:failed", task.getException());
+                            Toast.makeText(Main2Activity.this, "Auth failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // [START_EXCLUDE]
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(Main2Activity.this, "Sign in failed try signing up first",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                        else  {
+                            checkuserexits();
+                        }
+                        pd.dismiss();
+
+                        // [END_EXCLUDE]
+                    }
+                });
+        // [END sign_in_with_email]
+    }
+    private void checkuserexits() {
+        final String userid = mAuth.getCurrentUser().getUid();
+        if (pd!=null)
+pd.show();
+
+
+
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot datasnapshot) {
+                if (datasnapshot.child("users").hasChild(userid)) {
+                    if (pd!=null)
+                    pd.dismiss();
+                    startActivity(new Intent(Main2Activity.this, MainActivity.class));
+                    finish();
+
+                }
+                else {Toast.makeText(Main2Activity.this, "No Data try signing up first",
+                        Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(Main2Activity.this, signup.class));
+                    finish();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
 }
 
 

@@ -1,25 +1,37 @@
 package com.example.chirag.carparlour;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Pattern;
 
 import static android.text.TextUtils.isEmpty;
 
 public class signup extends AppCompatActivity {
-
+    private static final String TAG = "Signupwithemail";
     private AutoCompleteTextView name;
     private AutoCompleteTextView number;
     private AutoCompleteTextView email;
@@ -27,13 +39,49 @@ public class signup extends AppCompatActivity {
     private AutoCompleteTextView passw;
     private CheckBox check;
     private Boolean s;
+    DatabaseReference Database;
+    private FirebaseAuth mAuth;
+    User u;
+    ProgressDialog pd;
+
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        s = false;
+        pd = new ProgressDialog(signup.this);
+        pd.setMessage("loading");
+        mAuth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
 
+        FirebaseUser mUser = mAuth.getCurrentUser();
+        if (mUser != null) {
+            // User is signed in
+            Intent i=new Intent(signup.this,MainActivity.class);
+            startActivity(i);
+            finish();
+        }
+        // [START auth_state_listener]
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // [START_EXCLUDE]
+
+                // [END_EXCLUDE]
+            }
+        };
+        s = false;
+        Database= FirebaseDatabase.getInstance().getReference();
         TextView text = (TextView) findViewById(R.id.terms);
         text.setPaintFlags(text.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         text.setOnClickListener(new View.OnClickListener() {
@@ -192,10 +240,10 @@ public class signup extends AppCompatActivity {
                     focusView.requestFocus();
                 }
                 else
-                {
-                    Intent i=new Intent(signup.this,MainActivity.class);
-                    startActivity(i);
-                    finish();
+                {   u=new User(a,b,c,d);
+                    createAccount(c,d);
+
+
                 }
             }
         });
@@ -210,5 +258,55 @@ public class signup extends AppCompatActivity {
     }
     private boolean isValidPhone(CharSequence target) {
         return !isEmpty(target) && android.util.Patterns.PHONE.matcher(target).matches() && target.length() == 10;
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+    private void createAccount(String email, String password) {
+        Log.d(TAG, "createAccount:" + email);
+
+pd.show();
+        // [START create_user_with_email]
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signunWithEmail:failed", task.getException());
+                            Toast.makeText(signup.this, "Auth failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            onAuthenticationSucess(task.getResult().getUser());
+                        }
+                        pd.dismiss();
+
+
+
+                    }
+                });
+        // [END create_user_with_email]
+    }
+    private void onAuthenticationSucess(FirebaseUser mUser) {
+        // Write new user
+        Database.child("users").child(mUser.getUid()).setValue(u);
+        Intent i=new Intent(signup.this,MainActivity.class);
+        startActivity(i);
+        finish();
+
     }
 }

@@ -3,6 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:paddingBottom="3dp"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+android:gravity="center"
     android:layout_height="wrap_content">
 
 
@@ -10,8 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:src="@drawable/car"
-        android:background="@color/colorPrimary"
     android:tint="@color/colorWhite"/>
+    <TextView
+        android:id="@+id/navtext"
+        android:textColor="@color/colorWhite"
+        android:text="Sample"
+        android:textSize="20dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
 
 
 </LinearLayout>

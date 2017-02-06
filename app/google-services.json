@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "534522356124",
+    "firebase_url": "https://database-ec90e.firebaseio.com",
+    "project_id": "database-ec90e",
+    "storage_bucket": "database-ec90e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:534522356124:android:63457e491c7d0fef",
+        "android_client_info": {
+          "package_name": "com.example.chirag.carparlour"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "534522356124-gqpuv208rt080n70n9emsijf0k4u40k1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsbLUgwGbQOH9ykpw3Pk7pvnpM89Fa5BM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "534522356124-gqpuv208rt080n70n9emsijf0k4u40k1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
