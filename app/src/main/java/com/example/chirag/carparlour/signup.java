@@ -181,7 +181,13 @@ public class signup extends AppCompatActivity {
                 check = (CheckBox) findViewById(R.id.check);
 
 
-                
+                if(d.length()<6)
+                {
+                    Toast.makeText(signup.this, "Password has to be 6 characters or more!",
+                            Toast.LENGTH_LONG).show();
+                    focusView = pass1;
+                    cancel = true;
+                }
                 if(e.compareTo(d)!=0)
                 {
                   passw1.setError("Re-entered password does not match!");
